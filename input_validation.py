@@ -9,8 +9,8 @@ input_schema = {
 
 filter_schema = {
     'type': 'dict', 'schema': {
-        'univ': {'type': 'list', "required": False, 'items': [{'type': 'string'}]},
-        'semester': {'type': 'list', "required": False, 'items': [{'type': 'string', 'allowed': ['summer', 'winter']}]}
+        'uni': {'type': 'list', "required": False, 'schema': {'type': 'string'}},
+        'semester': {'type': 'list', "required": False, 'schema': {'type': 'string', 'allowed': ['summer', 'winter']}}
     }
 }
 
