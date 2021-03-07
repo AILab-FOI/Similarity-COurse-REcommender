@@ -1,3 +1,5 @@
+from cerberus import Validator
+
 input_schema = {
     'type': 'dict', 'schema': {
         'description': {"type": 'string', "required": True},
@@ -22,3 +24,5 @@ schema = {
     'filter': filter_schema,
     'outputFormat': output_format_schema,
 }
+
+validator = Validator(schema)
