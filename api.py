@@ -1,64 +1,37 @@
 from flask import Flask, request, g
 from input_validation import validator
-from database import query_db
-
+from database import query_db, generate_sql_filter
+from data_processing import course_row_to_json, generate_response
 
 app = Flask(__name__)
 
-LOGICAL_DISJUNCTION_JOIN = " OR "
-LOGICAL_CONJUNCTION_JOIN = " AND "
-COMMA_JOIN = ", "
 
-
-def course_row_to_json(record):
-    name, uni, courseId, credits, semester, description, goals = record
-
-    return {
-        'name': name,
-        'uni': uni,
-        'courseId': courseId,
-        'credits': credits,
-        'semester': semester,
-        'description': description,
-        'goals': goals,
-    }
-
-
-def generate_sql_filter(filter):
-    sql_filters = []
-
-    if "uni" in filter:
-        unis = filter['uni']
-        uni_like = [f'UNI LIKE "%{uni}%"' for uni in unis]
-        uni_filter = f'({LOGICAL_DISJUNCTION_JOIN.join(uni_like)})'
-
-        sql_filters.append(uni_filter)
-
-    if "semester" in filter:
-        semesters = filter['semester']
-        semester_names = [f'"{semester}"' for semester in semesters]
-        semester_filter = f'(SEMESTER in ({COMMA_JOIN.join(semester_names)}))'
-
-        sql_filters.append(semester_filter)
-
-    return f'WHERE {LOGICAL_CONJUNCTION_JOIN.join(sql_filters)}'
-
-
-@app.route('/check-similarity', methods=['POST'])
-def hello():
+@app.route('/check-courses-similarity', methods=['POST'])
+def check_courses_similarity():
     content = request.get_json()
 
+    # validate input
     if not validator.validate(content):
-        return {"status": "error", "error": validator.errors}
+        return {"error": validator.errors}
 
-    sql_filter = generate_sql_filter(content['filter'])
+    # generate SQL filter query
+    sql_filter = ""
+    if "filter" in content:
+        sql_filter = generate_sql_filter(content['filter'])
 
+    # fetch courses from db
     courses = query_db(
         f'SELECT NAME, UNI, COURSE_ID, CREDITS, SEMESTER, DESCRIPTION, GOALS FROM COURSE {sql_filter}')
-    courses_json = [course_row_to_json(course)
-                    for course in courses]
 
-    return {"success": True, "courses": courses_json}
+    # format courses data to json
+    courses_json = [course_row_to_json(course) for course in courses]
+
+    # calculate similarity
+
+    # generate response based on desired fomrat
+    output = generate_response(content['outputFormat'], courses_json)
+
+    return output
 
 
 @app.teardown_appcontext
