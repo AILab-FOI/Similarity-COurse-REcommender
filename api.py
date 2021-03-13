@@ -6,13 +6,8 @@ from similarity import compute_similarity, configure_LSA
 
 app = Flask(__name__)
 
-lsi_model = None
-lsa_index = None
-
 
 def configure_similarity_alg():
-    global lsi_model, lsa_index
-
     # fetch courses from db
     courses = query_db(
         f'SELECT NAME, UNI, COURSE_ID, CREDITS, SEMESTER, DESCRIPTION, GOALS FROM COURSE')
@@ -22,6 +17,9 @@ def configure_similarity_alg():
 
     # generate lsi model & index
     lsi_model, lsa_index = configure_LSA(courses_json)
+
+    g._lsi_model = lsi_model
+    g._lsa_index = lsa_index
 
 
 @app.route('/check-courses-similarity', methods=['POST'])
@@ -46,7 +44,7 @@ def check_courses_similarity():
 
     # calculate similarity
     courses_json_similarities = compute_similarity(
-        content['input'], courses_json, lsi_model, lsa_index)
+        content['input'], courses_json, getattr(g, '_lsi_model', None), getattr(g, '_lsa_index', None))
 
     # generate response based on desired fomrat
     output = generate_response(
