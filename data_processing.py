@@ -35,7 +35,8 @@ def generate_csv_response(courses_json):
 
 def generate_xml_response(courses_json):
     json_response = generate_json_response(courses_json)
-    xml = json2xml.Json2xml(json_response).to_xml()
+    xml = json2xml.Json2xml(json_response, pretty=True,
+                            attr_type=False).to_xml()
 
     response = Response(xml, mimetype='text/xml')
 
