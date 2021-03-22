@@ -8,17 +8,32 @@ LOGICAL_CONJUNCTION_JOIN = " AND "
 COMMA_JOIN = ", "
 
 
+def connect_to_db():
+    return sqlite3.connect(DATABASE_PATH)
+
+
+def close_db_connection(db_connection=None):
+    if db_connection is None:
+        db_connection = getattr(g, '_database', None)
+
+    if db_connection is not None:
+        db_connection.close()
+
+
 def get_db():
     db = getattr(g, '_database', None)
 
     if db is None:
-        db = g._database = sqlite3.connect(DATABASE_PATH)
+        db = g._database = connect_to_db()
 
     return db
 
 
-def query_db(query, args=(), one=False):
-    cur = get_db().execute(query, args)
+def query_db(query, db_connection=None, args=(), one=False):
+    if db_connection is None:
+        db_connection = connect_to_db()
+
+    cur = db_connection.execute(query, args)
     rv = cur.fetchall()
     cur.close()
 
