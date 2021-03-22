@@ -28,9 +28,9 @@ def configure_similarity_alg():
     close_db_connection(db_connection)
 
 
-@app.route('/check-courses-similarity', methods=['POST'])
+@app.route('/check-courses-similarity', methods=['GET'])
 def check_courses_similarity():
-    content = request.get_json()
+    content = request.args
 
     # validate input
     if not validator.validate(content):
