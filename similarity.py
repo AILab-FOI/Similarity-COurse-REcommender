@@ -55,6 +55,9 @@ def createLSIModel(dictionary, corpus, numTopics: int = 7):
 
 
 def configure_LSA(documents: list, lsi: models.LsiModel = None, index=None):
+    documents = list(map(lambda course: to_LSA_comparison_document(
+        course['description'], course['goals']), documents))
+
     dictionary, corpus = preprocessLSA(documents)
 
     lsi, index = createLSIModel(dictionary, corpus)
