@@ -1,5 +1,7 @@
 # Similarity-COurse-REcommender
 
+This is an implementation of the server-side service of a model for finding similar courses from a set of courses based on the provided reference course attribute values (its description and its goals). Predefined set of courses can be filtered, and the output of the process can be in various formats.
+
 ## How to Run it
 
 ```
@@ -14,7 +16,7 @@ optional arguments:
 
 ## API Request Template
 
-In order to provide a valid API request to the `[host]:[port]/score/compute` gateway, the JSON or GET arguments must conform to the following template:
+In order to provide a valid API request to the `http://[host]:[port]/score/compute` gateway, the GET, POST, or JSON arguments must conform to the following template:
 
 ```json
 {
