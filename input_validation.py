@@ -2,6 +2,7 @@ from cerberus import Validator
 
 schemaCompute = {
     'input': {'type': 'dict',
+              'required': True,
               'schema': {
                   'description': {'type': 'string', 'required': True},
                   'goals': {'type': 'string', 'required': True}

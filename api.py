@@ -61,6 +61,13 @@ def check_courses_similarity():
     courses_json_similarities = compute_similarity(
         content['input'], courses_json, lsi_model, lsa_index)
 
+    if not 'output' in content:
+        content.update({
+            'output': {
+                'format': 'json'
+            }
+        })
+
     # generate response based on desired fomrat
     output = generate_response(
         content['output']['format'], courses_json_similarities[:3])
