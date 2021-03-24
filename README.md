@@ -16,23 +16,23 @@ optional arguments:
 
 In order to provide a valid API request to the `[host]:[port]/score/compute` gateway, the JSON or GET arguments must conform to the following template:
 
-```python
+```json
 {
-    'input': {'type': 'dict',
-              'schema': {
-                  'description': {'type': 'string', 'required': True},
-                  'goals': {'type': 'string', 'required': True}
+    "input": {"type": "dict",
+              "schema": {
+                  "description": {"type": "string", "required": true},
+                  "goals": {"type": "string", "required": true}
               }
     },
-    'data': {'type': 'string'},
-    'filter': {'type': 'dict', 'allow_unknown': True,
-               'schema': {
-                   'uni': {'type': 'list'},
-                   'semester': {'type': 'list'}
+    "data": {"type": "string"},
+    "filter": {"type": "dict", "allow_unknown": true,
+               "schema": {
+                   "uni": {"type": "list"},
+                   "semester": {"type": "list"}
                }},
-    'output': {'type': 'dict',
-               'schema': {
-                   'format': {'type': 'string', 'allowed': ['xml', 'json', 'csv']}
+    "output": {"type": "dict",
+               "schema": {
+                   "format": {"type": "string", "allowed": ["xml", "json", "csv"]}
                }
     }
 }
@@ -41,11 +41,11 @@ In order to provide a valid API request to the `[host]:[port]/score/compute` gat
 Example JSON request:
 
 ```json
-'{"input":{"description":"jedanjakodobarpredmet","goals":"learnhowtolearn"},"output":{"format":"json"},"filter":{"semester":["winter"]}}'
+'{"input":{"description":"description of the reference course","goals":"learn how to learn"},"output":{"format":"json"},"filter":{"semester":["winter"]}}'
 ```
 
 Example GET request:
 
 ```
-http://[host]:[port]/score/compute?input={%22description%22:%22jedanjakodobarpredmet%22,%22goals%22:%22learnhowtolearn%22}&output={%22format%22:%22json%22}&filter={%22semester%22:[%22summer%22],%22uni%22:[%22Zil%22]}
+http://[host]:[port]/score/compute?input={"description":"description of the reference course","goals":"learn how to learn"}&output={"format":"json"}&filter={"semester":["summer"],"uni":["Zil"]}
 ```
