@@ -19,6 +19,7 @@ In order to provide a valid API request to the `[host]:[port]/score/compute` gat
 ```json
 {
     "input": {"type": "dict",
+              "required": true,
               "schema": {
                   "description": {"type": "string", "required": true},
                   "goals": {"type": "string", "required": true}
