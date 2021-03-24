@@ -32,18 +32,20 @@ def configure_similarity_alg():
 
 @app.route('/score/compute', methods=['GET', 'POST'])
 def check_courses_similarity():
-    if request.is_json:
-        content = request.json
-    elif request.method in ['POST', 'GET']:
-        content = {k: json.loads(v) for k, v in request.values.items()}
-    else:
+    try:
+        if request.is_json:
+            content = request.json
+        elif request.method in ['POST', 'GET']:
+            content = {k: json.loads(v) for k, v in request.values.items()}
+        else:
+            return {'error': 'API request error. Bad request formatting.'}
+    except Exception as e:
+        print(e)
         return {'error': 'API request error. Bad request formatting.'}
 
     # validate input
     if not validatorCompute.validate(content):
         return {"error": validatorCompute.errors}
-
-    # return {'success': 'it works'}
 
     # generate SQL filter query
     sql_filter = ""

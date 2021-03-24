@@ -6,9 +6,11 @@ schemaCompute = {
               'schema': {
                   'description': {'type': 'string', 'required': True},
                   'goals': {'type': 'string', 'required': True}
-              }
-    },
-    'data': {'type': 'string'},
+              }},
+    'data': {'type': 'dict',
+             'schema': {
+                 'source': {'type': 'string'}
+             }},
     'filter': {'type': 'dict', 'allow_unknown': True,
                'schema': {
                    'uni': {'type': 'list'},
@@ -17,8 +19,7 @@ schemaCompute = {
     'output': {'type': 'dict',
                'schema': {
                    'format': {'type': 'string', 'allowed': ['xml', 'json', 'csv']}
-               }
-    }
+               }}
     # 'courseDescription': {'type': 'string', 'required': True},
     # 'courseGoals': {'type': 'string', 'required': True},
     # 'filterUni': {'type': 'list', 'required': False, 'schema': {'type': 'string'}},

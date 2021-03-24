@@ -23,9 +23,11 @@ In order to provide a valid API request to the `[host]:[port]/score/compute` gat
               "schema": {
                   "description": {"type": "string", "required": true},
                   "goals": {"type": "string", "required": true}
-              }
-    },
-    "data": {"type": "string"},
+              }},
+    "data": {"type": "dict",
+             "schema": {
+                 "source": {"type": "string"}
+             }},
     "filter": {"type": "dict", "allow_unknown": true,
                "schema": {
                    "uni": {"type": "list"},
@@ -34,15 +36,14 @@ In order to provide a valid API request to the `[host]:[port]/score/compute` gat
     "output": {"type": "dict",
                "schema": {
                    "format": {"type": "string", "allowed": ["xml", "json", "csv"]}
-               }
-    }
+               }}
 }
 ```
 
 Example JSON request:
 
 ```json
-'{"input":{"description":"description of the reference course","goals":"learn how to learn"},"output":{"format":"json"},"filter":{"semester":["winter"]}}'
+{"input":{"description":"description of the reference course","goals":"learn how to learn"},"output":{"format":"json"},"filter":{"semester":["winter"]}}
 ```
 
 Example GET request:
