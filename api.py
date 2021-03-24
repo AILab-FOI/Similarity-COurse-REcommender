@@ -1,8 +1,10 @@
 from flask import Flask, request, g
-from input_validation import validator
+from input_validation import validatorCompute
 from database import query_db, generate_sql_filter, connect_to_db, close_db_connection
 from data_processing import course_row_to_json, generate_response
 from similarity import compute_similarity, configure_LSA
+import json
+import argparse
 
 app = Flask(__name__)
 
@@ -28,13 +30,20 @@ def configure_similarity_alg():
     close_db_connection(db_connection)
 
 
-@app.route('/check-courses-similarity', methods=['GET'])
+@app.route('/score/compute', methods=['GET', 'POST'])
 def check_courses_similarity():
-    content = request.args
+    if request.is_json:
+        content = request.json
+    elif request.method in ['POST', 'GET']:
+        content = {k: json.loads(v) for k, v in request.values.items()}
+    else:
+        return {'error': 'API request error. Bad request formatting.'}
 
     # validate input
-    if not validator.validate(content):
-        return {"error": validator.errors}
+    if not validatorCompute.validate(content):
+        return {"error": validatorCompute.errors}
+
+    # return {'success': 'it works'}
 
     # generate SQL filter query
     sql_filter = ""
@@ -54,7 +63,7 @@ def check_courses_similarity():
 
     # generate response based on desired fomrat
     output = generate_response(
-        content['outputFormat'], courses_json_similarities)
+        content['output']['format'], courses_json_similarities[:3])
 
     return output
 
@@ -65,5 +74,19 @@ def close_connection(exception):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-d", dest="debugvar", action="store_true",
+                        help="Debug mode")
+    parser.add_argument("--host", const=True, nargs='?', type=str,
+                        help="Specify host for server to run on. DEFAULT: 0.0.0.0")
+    parser.add_argument("--port", const=True, nargs='?', type=int,
+                        help="Specify port for server to run on. DEFAULT: 50021")
+    parser.set_defaults(
+        debugvar=False,
+        host='0.0.0.0',
+        port=50021
+    )
+    args = parser.parse_args()
+
     configure_similarity_alg()
-    app.run()
+    app.run(host=args.host, port=args.port, debug=args.debugvar)

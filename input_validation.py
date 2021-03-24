@@ -1,11 +1,28 @@
 from cerberus import Validator
 
-schema = {
-    'courseDescription': {"type": 'string', "required": True},
-    'courseGoals': {"type": 'string', "required": True},
-    'filterUni': {'type': 'list', "required": False, 'schema': {'type': 'string'}},
-    'filterSemester': {'type': 'list', "required": False, 'schema': {'type': 'string', 'allowed': ['summer', 'winter']}},
-    'outputFormat': {'type': 'string', 'allowed': ['json', 'xml', 'csv']},
+schemaCompute = {
+    'input': {'type': 'dict',
+              'schema': {
+                  'description': {'type': 'string', 'required': True},
+                  'goals': {'type': 'string', 'required': True}
+              }
+    },
+    'data': {'type': 'string'},
+    'filter': {'type': 'dict', 'allow_unknown': True,
+               'schema': {
+                   'uni': {'type': 'list'},
+                   'semester': {'type': 'list'}
+               }},
+    'output': {'type': 'dict',
+               'schema': {
+                   'format': {'type': 'string', 'allowed': ['xml', 'json', 'csv']}
+               }
+    }
+    # 'courseDescription': {'type': 'string', 'required': True},
+    # 'courseGoals': {'type': 'string', 'required': True},
+    # 'filterUni': {'type': 'list', 'required': False, 'schema': {'type': 'string'}},
+    # 'filterSemester': {'type': 'list', 'required': False, 'schema': {'type': 'string', 'allowed': ['summer', 'winter']}},
+    # 'outputFormat': {'type': 'string', 'allowed': ['json', 'xml', 'csv']},
 }
 
-validator = Validator(schema)
+validatorCompute = Validator(schemaCompute)
