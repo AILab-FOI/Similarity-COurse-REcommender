@@ -51,5 +51,9 @@ Example JSON request:
 Example GET request:
 
 ```
-http://[host]:[port]/score/compute?input={"description":"description of the reference course","goals":"learn how to learn"}&output={"format":"json"}&filter={"semester":["summer"],"uni":["Zil"]}
+http://<host>:<port>/score/compute?input={"description":"description of the reference course","goals":"learn how to learn"}&output={"format":"json"}&filter={"semester":["summer"],"uni":["Zil"]}
 ```
+
+## Data Sources
+
+The data stored in the included database are copied from the publicly available course descriptions of University of Žilina and Graz University of Technology.
