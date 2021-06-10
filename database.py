@@ -30,12 +30,39 @@ def get_db():
 
 
 def query_db(query, db_connection=None, args=(), one=False):
+    """Fetch data from a DB.
+    If no connection is given, then connect to a DB.
+    Close connection when finished.
+
+    Parameters
+    ----------
+    query : type
+        The SQL query to be executed.
+    db_connection : type
+        DB connection instance.
+    args : type
+        Additional arguments to be forwarded to sqlite3.execute()
+    one : type
+        True if only 1 row is to be returned.
+
+    Returns
+    -------
+    Returns a list of dictionaries. Each item is a row of fetched data.
+    Dictionary keys are column names of the fetched data.
+
+    """
     if db_connection is None:
         db_connection = connect_to_db()
 
-    cur = db_connection.execute(query, args)
-    rv = cur.fetchall()
+    db_connection.row_factory = sqlite3.Row
+
+    cur = db_connection.cursor()
+
+    cur.execute(query, args)
+    rv = [dict(row) for row in cur.fetchall()]
     cur.close()
+
+    close_db_connection(db_connection)
 
     return (rv[0] if rv else None) if one else rv
 
