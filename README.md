@@ -28,7 +28,7 @@ optional arguments:
 
 ## API Request Template
 
-In order to provide a valid API request to the `http://[host]:[port]/score/compute` gateway, the GET, POST, or JSON arguments must conform to the following template:
+In order to provide a valid API request to the `http://[host]:[port]/score/compute` endpoint, the GET, POST, or JSON arguments must conform to the following template:
 
 ```json
 {
@@ -66,7 +66,7 @@ Example GET request:
 http://<host>:<port>/score/compute?input={"description":"description of the reference course","goals":"learn how to learn"}&output={"format":"json"}&filter={"semester":["summer"],"uni":["Zil"]}
 ```
 
-All the data stored in the connected database can be fetched sing endpoint `http://[host]:[port]/score/fetchdata`. If no output format is provided (following the above template), then the data are returned as JSON.
+All the data stored in the connected database can be fetched using endpoint `http://[host]:[port]/score/fetchdata`. If no output format is provided (following the above template), then the data are returned as JSON.
 
 ## Data Sources
 
