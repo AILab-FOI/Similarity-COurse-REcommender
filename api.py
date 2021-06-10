@@ -1,7 +1,7 @@
-from flask import Flask, request, g
-from input_validation import validatorCompute
-from database import query_db, generate_sql_filter, connect_to_db, close_db_connection
-from data_processing import course_row_to_json, generate_response
+from flask import Flask, request
+import input_validation as validator
+from database import query_db, generate_sql_filter, close_db_connection
+from data_processing import generate_response
 from similarity import compute_similarity, configure_LSA
 import json
 import argparse
@@ -12,26 +12,26 @@ lsi_model = None
 lsa_index = None
 
 
+def get_all_data(filters=''):
+    if filters:
+        filters = generate_sql_filter(filters)
+
+    query = f'SELECT * FROM COURSE {filters}'
+    return query_db(query)
+
+
 def configure_similarity_alg():
     global lsi_model
     global lsa_index
 
     # fetch courses from db
-    db_connection = connect_to_db()
-    courses = query_db(
-        f'SELECT NAME, UNI, COURSE_ID, CREDITS, SEMESTER, DESCRIPTION, GOALS FROM COURSE', db_connection)
-
-    # format courses data to json
-    courses_json = [course_row_to_json(course) for course in courses]
+    courses = get_all_data()
 
     # generate lsi model & index
-    lsi_model, lsa_index = configure_LSA(courses_json)
-
-    close_db_connection(db_connection)
+    lsi_model, lsa_index = configure_LSA(courses)
 
 
-@app.route('/score/compute', methods=['GET', 'POST'])
-def check_courses_similarity():
+def extract_contents(request, endpoint: str):
     try:
         if request.is_json:
             content = request.json
@@ -44,42 +44,55 @@ def check_courses_similarity():
         return {'error': 'API request error. Bad request formatting.'}
 
     # validate input
-    if not validatorCompute.validate(content):
-        return {"error": validatorCompute.errors}
+    if endpoint == 'compute':
+        if not validator.validatorCompute.validate(content):
+            return {"error": validator.validatorCompute.errors}
+    elif endpoint == 'fetchdata':
+        if not validator.validatorFetchData.validate(content):
+            return {"error": validator.validatorFetchData.errors}
+
+    return content
+
+
+@app.route('/score/fetchdata', methods=['GET', 'POST'])
+def fetch_data():
+    content = extract_contents(request, 'fetchdata')
 
     # generate SQL filter query
-    sql_filter = ""
-    if "filter" in content:
-        sql_filter = generate_sql_filter(content['filter'])
-
-    # fetch courses from db
-    courses = query_db(
-        f'SELECT NAME, UNI, COURSE_ID, CREDITS, SEMESTER, DESCRIPTION, GOALS FROM COURSE {sql_filter}')
-
-    # format courses data to json
-    courses_json = [course_row_to_json(course) for course in courses]
-
-    # calculate similarity
-    courses_json_similarities = compute_similarity(
-        content['input'], courses_json, lsi_model, lsa_index)
-
-    if not 'output' in content:
-        content.update({
-            'output': {
-                'format': 'json'
-            }
-        })
+    courses = get_all_data(filters=content.get('filter', ''))
 
     # generate response based on desired fomrat
     output = generate_response(
-        content['output']['format'], courses_json_similarities[:3])
+        content.get('output', {'format': 'json'}).get('format'), courses)
+
+    return output
+
+
+@app.route('/score/compute', methods=['GET', 'POST'])
+def check_courses_similarity():
+    content = extract_contents(request, 'compute')
+
+    # generate SQL filter query
+    courses = get_all_data(filters=content.get('filter', ''))
+
+    # calculate similarity
+    courses_json_similarities = compute_similarity(
+        content['input'], courses, lsi_model, lsa_index)
+
+    # generate response based on desired fomrat
+    output = generate_response(
+        content.get('output', {'format': 'json'}).get('format'),
+        courses_json_similarities[:3])
 
     return output
 
 
 @ app.teardown_appcontext
 def close_connection(exception):
-    close_db_connection()
+    try:
+        close_db_connection()
+    except Exception:
+        pass
 
 
 if __name__ == '__main__':

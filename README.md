@@ -2,9 +2,21 @@
 
 This is an implementation of the server-side service of a model for finding similar courses from a set of courses based on the provided reference course attribute values (its description and its goals). Predefined set of courses can be filtered, and the output of the process can be in various formats.
 
+## TOC
+
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+- [Similarity-COurse-REcommender](#similarity-course-recommender)
+	- [TOC](#toc)
+	- [How to Run it](#how-to-run-it)
+	- [API Request Template](#api-request-template)
+	- [Data Sources](#data-sources)
+
+<!-- /TOC -->
+
 ## How to Run it
 
-```
+```bash
 usage: api.py [-h] [-d] [--host [HOST]] [--port [PORT]]
 
 optional arguments:
@@ -53,6 +65,8 @@ Example GET request:
 ```
 http://<host>:<port>/score/compute?input={"description":"description of the reference course","goals":"learn how to learn"}&output={"format":"json"}&filter={"semester":["summer"],"uni":["Zil"]}
 ```
+
+All the data stored in the connected database can be fetched sing endpoint `http://[host]:[port]/score/fetchdata`. If no output format is provided (following the above template), then the data are returned as JSON.
 
 ## Data Sources
 
