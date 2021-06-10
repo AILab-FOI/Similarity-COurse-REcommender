@@ -18,13 +18,19 @@ schemaCompute = {
                }},
     'output': {'type': 'dict',
                'schema': {
-                   'format': {'type': 'string', 'allowed': ['xml', 'json', 'csv']}
+                   'format': {'type': 'string', 'allowed':
+                              ['xml', 'json', 'csv']}
                }}
-    # 'courseDescription': {'type': 'string', 'required': True},
-    # 'courseGoals': {'type': 'string', 'required': True},
-    # 'filterUni': {'type': 'list', 'required': False, 'schema': {'type': 'string'}},
-    # 'filterSemester': {'type': 'list', 'required': False, 'schema': {'type': 'string', 'allowed': ['summer', 'winter']}},
-    # 'outputFormat': {'type': 'string', 'allowed': ['json', 'xml', 'csv']},
 }
 
 validatorCompute = Validator(schemaCompute)
+
+schemaFetchData = {
+    'output': {'type': 'dict',
+               'schema': {
+                   'format': {'type': 'string', 'allowed':
+                              ['xml', 'json', 'csv']}
+               }}
+}
+
+validatorFetchData = Validator(schemaFetchData)
