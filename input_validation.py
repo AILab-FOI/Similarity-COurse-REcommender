@@ -26,6 +26,11 @@ schemaCompute = {
 validatorCompute = Validator(schemaCompute)
 
 schemaFetchData = {
+    'filter': {'type': 'dict', 'allow_unknown': True,
+               'schema': {
+                   'uni': {'type': 'list'},
+                   'semester': {'type': 'list'}
+               }},
     'output': {'type': 'dict',
                'schema': {
                    'format': {'type': 'string', 'allowed':
